@@ -216,3 +216,307 @@ module.exports = {
 5. commonjs模块中不能使用import语句，会报错
 
 6. webpakc的output设置会设置模块的打包格式和保留变量，如果设置library = 'test'，那么打包后的js执行完成后所有的模块将会挂到window.test上
+
+
+[项目地址](https://github.com/mcdyzg/webpack-analyse.git)
+
+
+
+
+## 第二部分：webpack模块化是如何实现的
+
+## 前言
+
+我们都知道，浏览器是无法识别commonjs规范的模块和es6 module的。将这些规范的模块转化为浏览器认识的语句就是webpack做的最基本事情，webpack 本身维护了一套模块系统，这套模块系统兼容了所有前端历史进程下的模块规范，包括 amd commonjs es6 等。当然babel也具有将es6模块转化的能力，但是由于webpack 具有tree-shaking的功能，比起babel来更加具有优势。所以一般babel配置里都会禁止掉babel的module功能。["es2015", {"modules": false}]
+
+## commonjs规范
+
+### 项目结构：
+
+1. app.js(entry)：
+
+```
+var c = require('./c')
+console.log(c)
+```
+
+2. c.js(entry)：
+
+```
+let c1 = 'c1'
+let c2 = 'c2'
+module.exports = {
+	c1,
+	c2,
+}
+```
+
+### 打包结果：
+
+```
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["app"] = factory();
+	else
+		root["app"] = factory();
+})(typeof self !== 'undefined' ? self : this, function() {
+return  (function(modules) { // webpackBootstrap
+ 	// The module cache
+ 	var installedModules = {};
+
+ 	// The require function
+ 	function __webpack_require__(moduleId) {
+
+ 		// Check if module is in cache
+ 		if(installedModules[moduleId]) {
+ 			return installedModules[moduleId].exports;
+ 		}
+ 		// Create a new module (and put it into the cache)
+ 		var module = installedModules[moduleId] = {
+ 			i: moduleId,
+ 			l: false,
+ 			exports: {}
+ 		};
+
+ 		// Execute the module function
+ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+ 		// Flag the module as loaded
+ 		module.l = true;
+
+ 		// Return the exports of the module
+ 		return module.exports;
+ 	}
+
+
+ 	// expose the modules object (__webpack_modules__)
+ 	__webpack_require__.m = modules;
+
+ 	// expose the module cache
+ 	__webpack_require__.c = installedModules;
+
+ 	// define getter function for harmony exports
+ 	__webpack_require__.d = function(exports, name, getter) {
+ 		if(!__webpack_require__.o(exports, name)) {
+ 			Object.defineProperty(exports, name, {
+ 				configurable: false,
+ 				enumerable: true,
+ 				get: getter
+ 			});
+ 		}
+ 	};
+
+ 	// getDefaultExport function for compatibility with non-harmony modules
+ 	__webpack_require__.n = function(module) {
+ 		var getter = module && module.__esModule ?
+ 			function getDefault() { return module['default']; } :
+ 			function getModuleExports() { return module; };
+ 		__webpack_require__.d(getter, 'a', getter);
+ 		return getter;
+ 	};
+
+ 	// Object.prototype.hasOwnProperty.call
+ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+
+ 	// __webpack_public_path__
+ 	__webpack_require__.p = "";
+
+ 	// Load entry module and return exports
+ 	return __webpack_require__(__webpack_require__.s = 0);
+ })
+/************************************************************************/
+ ([
+/* 0 */
+ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(1);
+
+
+ }),
+/* 1 */
+ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var c = __webpack_require__(2);
+console.log(c);
+
+module.exports = {
+	a: '我是a'
+};
+
+ }),
+/* 2 */
+ (function(module, exports) {
+
+var c1 = 'c1';
+var c2 = 'c2';
+module.exports = {
+	c1: c1,
+	c2: c2
+};
+
+ })
+ ]);
+});
+```
+
+### 解析：
+
+打包生成的是个立即执行函数，简化来写就是
+
+```
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["app"] = factory();
+	else
+		root["app"] = factory();
+})(typeof self !== 'undefined' ? self : this, function() {解析完的模块部分})
+```
+
+可以看到模块部分被作为factory参数传入了webpackUniversalModuleDefinition中，如果检测到module.exports有定义，那么模块赋值给module.exports；如果检测到amd的模块系统有定义，赋值给define的模块系统；最后如果上述模块系统都未检测到，赋值给webpack.output.library定义的全局变量。浏览器可以通过window.app拿到解析好的模块。
+
+下面看模块解析部分
+
+factory：
+```
+function(){
+    return (function(modules){
+        解析模块的方法
+    })([function(){模块1},function(){模块1},...])
+}
+```
+
+factory方法最后return出去的就是webpack entry的js：app.js的暴露的值。
+
+解析模块的方法：
+```
+var installedModules = {};
+function __webpack_require__(moduleId) {
+	if(installedModules[moduleId]) {
+		return installedModules[moduleId].exports;
+	}
+	var module = installedModules[moduleId] = {
+		i: moduleId,
+		l: false,
+		exports: {}
+	};
+	modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+	module.l = true;
+	return module.exports;
+}
+__webpack_require__.m = modules;
+__webpack_require__.c = installedModules;
+__webpack_require__.d = function(exports, name, getter) {
+	if(!__webpack_require__.o(exports, name)) {
+		Object.defineProperty(exports, name, {
+			configurable: false,
+			enumerable: true,
+			get: getter
+		});
+	}
+};
+__webpack_require__.n = function(module) {
+	var getter = module && module.__esModule ?
+		function getDefault() { return module['default']; } :
+		function getModuleExports() { return module; };
+	__webpack_require__.d(getter, 'a', getter);
+	return getter;
+};
+__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+__webpack_require__.p = "";
+return __webpack_require__(__webpack_require__.s = 0);
+```
+
+1. 定义了installedModules ，这个变量被用来缓存已加载的模块。
+2. 定义了__webpack_require__ 这个函数，函数参数为模块的id。这个函数用来实现模块的require。
+3. __webpack_require__ 函数首先会检查是否缓存了已加载的模块，如果有则直接返回缓存模块的exports。
+4. 如果没有缓存，也就是第一次加载，则首先初始化模块，并将模块进行缓存。初始化->
+
+    ```
+    {
+		i: moduleId,
+		l: false,
+		exports: {}
+	}
+    ```
+5. 然后调用模块函数，也就是前面webpack对我们的模块的包装函数，将module、module.exports和__webpack_require__作为参数传入。注意这里做了一个动态绑定，将模块函数的调用对象绑定为module.exports，这是为了保证在模块中的this指向当前模块。
+6. 调用完成后，模块标记为已加载。
+7. 返回模块exports的内容。
+8. 利用前面定义的__webpack_require__ 函数，require第0个模块，也就是入口模块。
+
+> https://segmentfault.com/a/1190000010349749
+
+再看编号为 0 的模块
+
+```
+function(module, exports, __webpack_require__) {
+    module.exports = __webpack_require__(1);
+}
+```
+
+直接让expoprts = __webpack_require__(1),此时
+
+```
+installedModules[0] = {i: 1, l: true, exports: __webpack_require__(1)}
+```
+
+再看编号为 1 的模块
+
+```
+function(module, exports, __webpack_require__) {
+    "use strict";
+    var c = __webpack_require__(2);
+    console.log(c);
+    module.exports = {
+    	a: '我是a'
+    }
+}
+```
+
+直接让module.exports = {a: '我是a'},此时：
+
+```
+installedModules[1] = {i: 1, l: true, exports: {a:'我是a'}}
+```
+
+再看编号为 2 的模块
+
+```
+function(module, exports) {
+    var c1 = 'c1';
+    var c2 = 'c2';
+    module.exports = {
+    	c1: c1,
+    	c2: c2
+    };
+}
+```
+
+直接让module.exports = {c1: 'c1',c2: 'c2'},此时：
+
+```
+installedModules[2] = {i: 2, l: true, exports: {c1: 'c1',c2: 'c2'}}
+```
+
+结束，现在installedModules的结果是
+
+```
+{
+    0: {i: 0, l: true, exports: {a:'我是a'}}
+    1: {i: 1, l: true, exports: {a:'我是a'}}
+    2: {i: 2, l: true, exports: {c1: 'c1',c2: 'c2'}}
+}
+```
+
+factory函数要return的是`return __webpack_require__(__webpack_require__.s = 0);`
+
+因此入口模块：app.js的返回结果是{a:'我是a'}，同时window.app = {a:'我是a'}

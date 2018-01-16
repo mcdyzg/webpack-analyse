@@ -70,47 +70,24 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-// es6模块
+module.exports = __webpack_require__(1);
 
-// import b from './b'
-//
-// export let c1 = '我是c111'
-// export let c2 = '我是c222'
-//
-// export default '我是c';
-
-
-// // commonjs模块
-
-var c1 = 'c1';
-var c2 = 'c2';
-module.exports = {
-	c1: c1,
-	c2: c2
-};
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(2);
-
-
-/***/ }),
-/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__c__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__c___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__c__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "aaaa", function() { return aaaa; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__c__ = __webpack_require__(2);
 
 //基本组件
 
@@ -118,10 +95,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 // 如果本模块是es6模块，调用的c是commonjs模块，那么c会原样输出，并且c将不会有default属性，c会原样输出module.exports的值
 
 
-
-console.log(__WEBPACK_IMPORTED_MODULE_0__c___default.a, __WEBPACK_IMPORTED_MODULE_0__c__["c1"], __WEBPACK_IMPORTED_MODULE_0__c__["c2"]);
+console.log(__WEBPACK_IMPORTED_MODULE_0__c__["c" /* default */], __WEBPACK_IMPORTED_MODULE_0__c__["a" /* c1 */], __WEBPACK_IMPORTED_MODULE_0__c__["b" /* c2 */]);
 
 /* harmony default export */ __webpack_exports__["default"] = ('我是a');
+var aaaa = '我是aaaa';
 
 // // 如果是commonjs模块引用了es6模块，那么b编译后会添加{__esModule:true}。
 // // 如果b中有export default语句，那么编译后的b文件会添加b.default = ...，这时调用b里default的变量就需要b.default。
@@ -152,6 +129,46 @@ console.log(__WEBPACK_IMPORTED_MODULE_0__c___default.a, __WEBPACK_IMPORTED_MODUL
 // 5. commonjs模块中不能使用import语句，会报错
 
 // 6. webpakc的output设置会设置模块的打包格式和保留变量，如果设置library = 'test'，那么打包后的js执行完成后所有的模块将会挂到var test上
+
+/***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return c1; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return c2; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__b__ = __webpack_require__(3);
+// es6模块
+
+
+console.log(__WEBPACK_IMPORTED_MODULE_0__b__["a" /* default */]);
+
+var c1 = '我是c111';
+var c2 = '我是c222';
+
+/* harmony default export */ __webpack_exports__["c"] = ('我是c');
+
+// // commonjs模块
+
+// let c1 = 'c1'
+// let c2 = 'c2'
+// module.exports = {
+// 	c1,
+// 	c2,
+// }
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+// // es6模块
+/* harmony default export */ __webpack_exports__["a"] = ('bbb');
+
+// commonjs模块
+
+// 如果c.js是commonjs文件，那么虽然b可以被import引用（编译成了webpack 的module），但是不能被tree-shaking了，
+// module.exports = 'bbb'
 
 /***/ })
 /******/ ]);

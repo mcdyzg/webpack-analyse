@@ -3,11 +3,11 @@
 
 // 如果本模块是es6模块，而且引用的c也是es6模块，那么c编译后不会添加{__esModule:true}，只有本模块才会添加{__esModule:true}
 // 如果本模块是es6模块，调用的c是commonjs模块，那么c会原样输出，并且c将不会有default属性，c会原样输出module.exports的值
-import c from './c';
-import {c1,c2} from './c'
+import c,{c1,c2} from './c';
 console.log(c,c1,c2)
 
 export default '我是a';
+export let aaaa = '我是aaaa';
 
 
 

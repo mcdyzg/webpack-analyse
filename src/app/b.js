@@ -1,5 +1,4 @@
 // // es6模块
-
 export default 'bbb';
 
 
