@@ -1154,6 +1154,7 @@ function(module, __webpack_exports__, __webpack_require__) {
     module.exports->不变
 
 > [webpack模块化原理-ES module](https://segmentfault.com/a/1190000010955254)
+
 > [import、require、export、module.exports 混合使用详解](https://segmentfault.com/a/1190000012386576#articleHeader8)
 
 [项目代码](https://github.com/mcdyzg/webpack-analyse.git)
