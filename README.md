@@ -1,4 +1,4 @@
-<!-- ## 前言
+## 前言
 
 本文着重介绍import、require混用的情况下打包结果有何不同，以及webpack打包出的js运行机制。webpack负责将commonjs和es6模块转化为浏览器认识的语句。
 
