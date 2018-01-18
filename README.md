@@ -1147,8 +1147,8 @@ function(module, __webpack_exports__, __webpack_require__) {
 
 简述：
 
-    import->__webpack_require__
-    require->__webpack_require__ 和 __webpack_require__.n
+    import->__webpack_require__ 和 __webpack_require__.n(引用commonjs模块时出现)
+    require->__webpack_require__
     export->__webpack_require__.d
     export default->__webpack_exports__[".."]
     module.exports->不变

@@ -88,7 +88,6 @@ module.exports = __webpack_require__(1);
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "aaaa", function() { return aaaa; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__c__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__c___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__c__);
 
 //基本组件
 
@@ -96,7 +95,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 // 如果本模块是es6模块，调用的c是commonjs模块，那么c会原样输出，并且c将不会有default属性，c会原样输出module.exports的值
 
 
-console.log(__WEBPACK_IMPORTED_MODULE_0__c___default.a, __WEBPACK_IMPORTED_MODULE_0__c__["c1"], __WEBPACK_IMPORTED_MODULE_0__c__["c2"]);
+console.log(__WEBPACK_IMPORTED_MODULE_0__c__["c" /* default */], __WEBPACK_IMPORTED_MODULE_0__c__["a" /* c1 */], __WEBPACK_IMPORTED_MODULE_0__c__["b" /* c2 */]);
 
 /* harmony default export */ __webpack_exports__["default"] = ('我是a');
 var aaaa = '我是aaaa';
@@ -133,27 +132,45 @@ var aaaa = '我是aaaa';
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return c1; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return c2; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__b__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__b___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__b__);
 // es6模块
 
-// import b from './b'
-// console.log(b)
+
+console.log(__WEBPACK_IMPORTED_MODULE_0__b___default.a);
+
+var c1 = '我是c111';
+var c2 = '我是c222';
+
+/* harmony default export */ __webpack_exports__["c"] = ('我是c');
+
 //
-// export let c1 = '我是c111'
-// export let c2 = '我是c222'
+// // // commonjs模块
 //
-// export default '我是c';
+// let c1 = 'c1'
+// let c2 = 'c2'
+// module.exports = {
+// 	c1,
+// 	c2,
+// }
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+// // es6模块
+// export default 'bbb';
 
 
-// // commonjs模块
+// commonjs模块
 
-var c1 = 'c1';
-var c2 = 'c2';
-module.exports = {
-	c1: c1,
-	c2: c2
-};
+// 如果c.js是commonjs文件，那么虽然b可以被import引用（编译成了webpack 的module），但是不能被tree-shaking了，
+module.exports = 'bbb';
 
 /***/ })
 /******/ ]);
